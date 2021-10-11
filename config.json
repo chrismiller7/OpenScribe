@@ -1,0 +1,11 @@
+{
+	"shutdownAfterMins": 10,
+    "encoding": "LINEAR16",
+    "sampleRateHertz": 16000,
+    "languageCode": "en-US",
+	"profanityFilter": true,
+	"useEnhanced": false,
+	"enableAutomaticPunctuation": true,
+	"streamingLimit":25000
+}
+  

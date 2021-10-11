@@ -1,0 +1,8 @@
+NODE:
+https://nodejs.org/download/release/v10.16.0/
+
+NPM:
+6.9.0
+
+SOX
+sox-14.4.1a-win32

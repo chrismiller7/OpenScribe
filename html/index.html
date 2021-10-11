@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>OpenScribe</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<style>
+
+	html {
+	}
+
+	body {
+		overflow:hidden; /*prevents scrolling*/
+			    background-size: cover;
+	    background-repeat:no-repeat;
+		background: #FFFFFF;
+		//background: rgb(211,238,251); 
+		//background: -moz-linear-gradient(top,  rgba(211,238,251,1) 0%, rgba(233,246,253,1) 100%); /* FF3.6-15 */
+		//background: -webkit-linear-gradient(top,  rgba(211,238,251,1) 0%,rgba(233,246,253,1) 100%); /* Chrome10-25,Safari5.1-6 */
+		background: linear-gradient(to bottom,  rgba(211,238,251,1) 0%,rgba(233,246,253,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		//filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d3eefb', endColorstr='#e9f6fd',GradientType=0 ); /* IE6-9 */
+	}
+
+	div {
+		border-style:dotted;
+		border-width:0px;
+	}
+
+	#parent {
+		display:inline-block;
+		height:60vh;
+		width:100vw;
+		overflow:hidden;
+	}
+
+	div.wordcontainer {
+		position:relative;
+		top:0px;
+		padding-left:40px;
+		padding-right:40px;
+	}
+
+	div.wordblock {
+		padding-top:40px;
+	}
+
+	span.word {
+		//font-size:20pt;
+		animation-name: example;
+		animation-duration: 3s;
+	}
+
+	.light {
+		filter: brightness(100);
+	}
+
+	/* Standard syntax */
+	@keyframes example {
+	  from {color: transparent;}
+	  to {color: black;}
+	}
+
+	</style>
+</header>
+
+<body style="background-color:transparent;">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<img src="icon.svg" style="margin-right:10px;" width="50" height="50" alt="">
+		<a class="navbar-brand" href="#">OpenScribe</a>
+	
+		<form>
+			<button class="btn btn-outline-success" type="button" onClick="FontSmaller();">Smaller -</button>
+			<button class="btn btn-outline-success" type="button" onClick="FontLarger();">Larger +</button>
+		</form>
+	</nav>
+
+	<div id ="parent">
+		<div class="wordcontainer">
+			<div class="wordblock">
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+	
+		var fontSize = 200;
+		$("#parent")[0].style.fontSize = fontSize + "%";
+		
+		function FontLarger()
+		{
+			fontSize += 10;
+			$("#parent")[0].style.fontSize = fontSize + "%";
+			window.onresize();
+		}
+		
+		function FontSmaller()
+		{
+			fontSize -= 10;
+			$("#parent")[0].style.fontSize = fontSize + "%";
+			window.onresize();
+		}
+
+		setInterval( function() 
+		{
+			var remove = false;
+			var con = $(".wordcontainer")[0];
+			var top = con.offsetTop;
+			//console.log(top);
+			var removeList = [];
+			
+			var blocks = $(".wordblock");
+			for (var i=0; i<blocks.length-1; i++)
+			{
+				var bottom = blocks[i].offsetTop + blocks[i].offsetHeight + top; 
+				if (bottom < 0)
+				{
+					removeList.push(blocks[i]);
+				}
+			}
+			
+			if (removeList.length > 0) 
+			{
+				for (var i=0; i<removeList.length; i++) 
+				{
+					var height = removeList[i].offsetHeight;
+					var top = parseInt(con.style.top) + height;
+					removeList[i].remove();
+					con.style.top = top + "px";
+					pos = top;
+				}
+				//window.onresize();
+			}
+		}, 1000);
+		
+
+		function SetText(str)
+		{
+			var words = str.split(" ").filter(function(el) {return el.length != 0});
+			var parent = $(".wordblock:last");
+			var els = $(".word", parent);
+
+			//console.log("SetText = " + str);
+
+			for (var i =0; i<els.length-words.length; i++)
+			{
+				$(".word:last", parent).remove();
+			}
+
+			els = $(".word", parent);
+			for (var i=0; i<els.length; i++)
+			{
+				els[i].textContent = " " + words[i];
+			}
+
+			els = $(".word", parent);
+			for (var i=0; i<words.length-els.length; i++)
+			{
+				AddText(words[els.length+i]);
+			}
+		}
+
+		function AddText(str)
+		{
+			var con = $(".wordblock:last")[0];
+			var s = document.createElement("SPAN");
+			s.textContent = " " + str;
+			s.className = "word";
+			con.appendChild(s);
+		}
+
+		function AddWordBlock()
+		{
+			var par = $(".wordcontainer")[0];
+			var s = document.createElement("DIV");
+			s.className = "wordblock";
+			par.appendChild(s);
+		}
+
+		/*var s = "";
+		var c = 0;
+		setInterval(()=>{
+			s += "something ";
+			SetText(s);
+		}, 200);
+
+		setInterval(()=>{
+			AddWordBlock();
+		}, 5000);*/
+
+
+		var pos = 0;
+
+		window.onresize = function() 
+		{
+			var parent = $("#parent")[0];
+			var parentHeight = window.innerHeight - parent.offsetTop;
+			parent.style.height = parentHeight + "px";
+			
+			var diff = GetLocDiff();
+			pos += diff;
+			var con = $(".wordcontainer")[0];
+			//pos = parseInt(con.style.top) + diff;
+			
+			con.style.top = (pos | 0) + "px";
+		};
+		
+		function GetLocDiff()
+		{
+			var par = document.getElementById("parent");
+			var con = $(".wordcontainer")[0];
+			var half = par.offsetHeight - 50;
+			var bottom = con.offsetTop + con.offsetHeight;
+			var from = bottom;
+			var to = (half - 0);
+			return to - from;
+		}
+		
+		function CheckPos()
+		{
+			var diff = GetLocDiff();
+			var change = diff*Math.abs(diff) / 20000;
+			pos += change;
+			
+			var con = $(".wordcontainer")[0];
+			//pos = parseInt(con.style.top) + diff;
+			con.style.top = (pos | 0) + "px";
+		}
+		setInterval(CheckPos, 1);
+		
+		
+		let url = "ws://" + window.location.host;
+		
+		let isConnected = false;
+		
+		setInterval(CheckConnection, 3000);
+		
+		function CheckConnection() 
+		{
+			if (!isConnected)
+			{
+				let socket = new WebSocket(url);
+				socket.onopen = function(e)
+				{	
+					isConnected = true;
+				};
+
+				socket.onclose = function(e)
+				{	
+					isConnected = false;
+					socket.onmessage = null;
+				};
+				
+				socket.onmessage = function(event) 
+				{
+					var msg = JSON.parse(event.data);
+					//console.log(msg);
+					if (msg.str) { 
+						SetText(msg.str); 
+					}
+					if (msg.isFinal) {
+						AddWordBlock();
+					}
+				};
+			}
+		}
+		
+		CheckConnection();
+		window.onresize();
+	</script>
+
+</body>
+</html>

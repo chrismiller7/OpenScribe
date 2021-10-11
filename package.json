@@ -1,0 +1,21 @@
+{
+  "name": "openscribe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@google-cloud/speech": "^3.5.4",
+    "dateformat": "^3.0.3",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "ws": "^7.2.1"
+  }
+}
